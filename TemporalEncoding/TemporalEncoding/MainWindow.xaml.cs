@@ -15,10 +15,14 @@ namespace TemporalEncoding
         private readonly Random _ran = new Random();
         private const int InputSize = 5;
         private const int DisplaySize = 50;
-        private const int ObservedPixels = 10;
+        private const int ObservedSensors = 25;
+        private const int ObservedBipolars = 9;
+
         private byte[] _input = new byte[InputSize * InputSize];
 
-        private readonly List<BindingList<RealtimeGraphItem>> _items = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _sensors = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _bipolars = new List<BindingList<RealtimeGraphItem>>();
+
         DispatcherTimer _timer;
         DateTime _last;
 
@@ -46,7 +50,7 @@ namespace TemporalEncoding
             _input = GenerateInput(InputSize * InputSize);
             DrawInput(_input);
 
-            for (int i = 0; i < ObservedPixels; i++)
+            for (int i = 0; i < ObservedSensors; i++)
             {
                 var graph = new RealtimeGraphControl
                 {
@@ -57,27 +61,27 @@ namespace TemporalEncoding
                     Height = 50,
                 };
 
-                _items.Add(new BindingList<RealtimeGraphItem>());
+                _sensors.Add(new BindingList<RealtimeGraphItem>());
 
                 _contentHolder.Children.Add(graph);
-                graph.SeriesSource = _items[i];
+                graph.SeriesSource = _sensors[i];
             }
 
-            for (int i = 0; i < ObservedPixels; i++)
+            for (int i = 0; i < ObservedBipolars; i++)
             {
                 var graph = new RealtimeGraphControl
                 {
                     MaxY = 1,
-                    MinY = 0,
+                    MinY = -1,
                     AxisColor = Colors.Gray,
                     SeriesColor = Colors.Black,
                     Height = 50,
                 };
 
-                _items.Add(new BindingList<RealtimeGraphItem>());
+                _bipolars.Add(new BindingList<RealtimeGraphItem>());
 
                 _contentHolder1.Children.Add(graph);
-                graph.SeriesSource = _items[i];
+                graph.SeriesSource = _bipolars[i];
             }
 
 
@@ -94,17 +98,48 @@ namespace TemporalEncoding
         {
             TimeSpan span = DateTime.Now - _last;
 
-            for (int i = 0; i < ObservedPixels; i++)
+            for (int i = 0; i < ObservedSensors; i++)
             {
-                int previousTime = _items[i].Count > 0 ? _items[i][_items[i].Count - 1].Time : 0;
+                int previousTime = _sensors[i].Count > 0 ? _sensors[i][_sensors[i].Count - 1].Time : 0;
                 var newItem = new RealtimeGraphItem
                 {
-                    Time = (int) (previousTime + span.TotalMilliseconds),
+                    Time = (int) (previousTime + span.TotalMilliseconds)+350,
                     Value = _input[i] / 256.0 //_ran.NextDouble()
                 };
 
-                _items[i].Add(newItem);
+                _sensors[i].Add(newItem);
             }
+
+
+            for (int j = 0; j < 3; j++)
+            {
+                for (int i = 0; i < 3; i++) 
+                {
+                    
+                    var index = (i + 1) + (j + 1)*5;
+                    var bipolarIndex = i + j * 3;
+
+                    int previousTime = _bipolars[bipolarIndex].Count > 0 ? _bipolars[bipolarIndex][_bipolars[bipolarIndex].Count - 1].Time : 0;
+                    var newItem = new RealtimeGraphItem
+                    {
+                        Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                        Value = (_input[index] -(_input[index - 1] + _input[index + 1] + _input[index - 3] + _input[index + 3] + _input[index + 3 + 1] + _input[index + 3 - 1] + +_input[index - 3 + 1] + _input[index - 3 - 1]) / 8.0) / 256.0 //_ran.NextDouble()
+                    };
+                    _bipolars[bipolarIndex].Add(newItem);
+
+                }
+            }
+            //{
+            //    int previousTime = _bipolars[i].Count > 0 ? _bipolars[i][_bipolars[i].Count - 1].Time : 0;
+            //    var newItem = new RealtimeGraphItem
+            //    {
+            //        Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+            //        Value = _input[i] / 256.0 //_ran.NextDouble()
+            //    };
+
+            //    _bipolars[i].Add(newItem);
+            //}
+
             _last = DateTime.Now;
         }
 

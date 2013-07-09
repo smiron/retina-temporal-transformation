@@ -1,7 +1,7 @@
 ﻿<Window x:Class="TemporalEncoding.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="522" Width="979">
+        Title="MainWindow" Height="622" Width="979">
     <Grid>
         <Border HorizontalAlignment="Left" 
                 Background="#FFDBDBDB" 
@@ -21,14 +21,14 @@
         </Border>
 
        
-        <ScrollViewer  Margin="281,8,458,7">
+        <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="281,8,0,0"  Width="218">
             <StackPanel x:Name="_contentHolder" Orientation="Vertical">
                 
             </StackPanel>
         </ScrollViewer>
 
 
-        <ScrollViewer  Margin="505,8,234,7">
+        <ScrollViewer VerticalAlignment="Stretch" HorizontalAlignment="Left"  Margin="505,8,0,0"  Width="218">
             <StackPanel x:Name="_contentHolder1" Orientation="Vertical">
 
             </StackPanel>
