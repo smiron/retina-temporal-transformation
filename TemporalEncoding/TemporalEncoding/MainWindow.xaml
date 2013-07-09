@@ -16,7 +16,23 @@
                         Width="252" Margin="9,7,0,0">
                     <Canvas Name="_canvas" VerticalAlignment="Top"  />
                 </Border>
+                <Button Content="Generate" Height="23" HorizontalAlignment="Left" Margin="10,452,0,0" Name="_generate" VerticalAlignment="Top" Width="75" Click="GenerateClick" />
             </Grid>
         </Border>
+
+       
+        <ScrollViewer  Margin="281,8,458,7">
+            <StackPanel x:Name="_contentHolder" Orientation="Vertical">
+                
+            </StackPanel>
+        </ScrollViewer>
+
+
+        <ScrollViewer  Margin="505,8,234,7">
+            <StackPanel x:Name="_contentHolder1" Orientation="Vertical">
+
+            </StackPanel>
+        </ScrollViewer>
+
     </Grid>
 </Window>
