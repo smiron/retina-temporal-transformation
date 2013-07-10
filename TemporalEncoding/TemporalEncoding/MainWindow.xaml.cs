@@ -47,16 +47,28 @@ namespace TemporalEncoding
                 result[i] = 255;// (byte)_ran.Next(256);
             }
 
-            result[2] = 0;
-            result[7] = 0;
-            result[12] = 0;
-            result[17] = 0;
-            result[22] = 0;
-
             result[0] = 0;
-            result[5] = 0;
+            result[1] = 0;
+            result[2] = 0;
+            result[3] = 0;
+            result[4] = 0;
+
             result[20] = 0;
+            result[21] = 0;
+            result[22] = 0;
+            result[23] = 0;
             result[24] = 0;
+
+            result[5] = 0;
+            result[10] = 0;
+            result[15] = 0;
+
+
+            result[9] = 0;
+            result[14] = 0;
+            result[19] = 0;
+
+            result[12] = 0;
 
 
 
@@ -163,22 +175,22 @@ namespace TemporalEncoding
             }
 
 
-            //for (int i = 0; i < ObservedBipolars; i++)
-            //{
-            //    var graph = new RealtimeGraphControl
-            //    {
-            //        MaxY = 1,
-            //        MinY = -1,
-            //        AxisColor = Colors.Gray,
-            //        SeriesColor = Colors.Black,
-            //        Height = 50,
-            //    };
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                var graph = new RealtimeGraphControl
+                {
+                    MaxY = 1,
+                    MinY = -1,
+                    AxisColor = Colors.Gray,
+                    SeriesColor = Colors.Black,
+                    Height = 50,
+                };
 
-            //    _offBipolars.Add(new BindingList<RealtimeGraphItem>());
+                _offBipolars.Add(new BindingList<RealtimeGraphItem>());
 
-            //    _contentHolderOff.Children.Add(graph);
-            //    graph.SeriesSource = _offBipolars[i];
-            //}
+                _contentHolderOff.Children.Add(graph);
+                graph.SeriesSource = _offBipolars[i];
+            }
 
 
             for (int i = 0; i < ObservedBipolars; i++)
@@ -273,16 +285,16 @@ namespace TemporalEncoding
                 _onBipolars[i].Add(newItem);
             }
 
-            //for (int i = 0; i < ObservedBipolars; i++)
-            //{
-            //    int previousTime = _offBipolars[i].Count > 0 ? _offBipolars[i][_offBipolars[i].Count - 1].Time : 0;
-            //    var newItem = new RealtimeGraphItem
-            //    {
-            //        Time = (int)(previousTime + span.TotalMilliseconds) + 350,
-            //        Value = _offBipolarsInput[i] / 256.0
-            //    };
-            //    _offBipolars[i].Add(newItem);
-            //}
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                int previousTime = _offBipolars[i].Count > 0 ? _offBipolars[i][_offBipolars[i].Count - 1].Time : 0;
+                var newItem = new RealtimeGraphItem
+                {
+                    Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                    Value = _offBipolarsInput[i] / 256.0
+                };
+                _offBipolars[i].Add(newItem);
+            }
 
 
             for (int i = 0; i < ObservedBipolars; i++)
