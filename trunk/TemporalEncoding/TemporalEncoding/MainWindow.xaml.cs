@@ -15,13 +15,19 @@ namespace TemporalEncoding
         private readonly Random _ran = new Random();
         private const int InputSize = 5;
         private const int DisplaySize = 50;
-        private const int ObservedSensors = 25;
+        private const int ObservedSensors = 5;
         private const int ObservedBipolars = 9;
 
         private byte[] _input = new byte[InputSize * InputSize];
+        private double[] _onBipolarsInput = new double[ObservedBipolars];
+        private double[] _offBipolarsInput = new double[ObservedBipolars];
+
 
         private readonly List<BindingList<RealtimeGraphItem>> _sensors = new List<BindingList<RealtimeGraphItem>>();
-        private readonly List<BindingList<RealtimeGraphItem>> _bipolars = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _onBipolars = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _offBipolars = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _spikeOnBipolars = new List<BindingList<RealtimeGraphItem>>();
+        private readonly List<BindingList<RealtimeGraphItem>> _spikeOffBipolars = new List<BindingList<RealtimeGraphItem>>();
 
         DispatcherTimer _timer;
         DateTime _last;
@@ -38,8 +44,21 @@ namespace TemporalEncoding
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = (byte)_ran.Next(256);
+                result[i] = 255;// (byte)_ran.Next(256);
             }
+
+            result[2] = 0;
+            result[7] = 0;
+            result[12] = 0;
+            result[17] = 0;
+            result[22] = 0;
+
+            result[0] = 0;
+            result[5] = 0;
+            result[20] = 0;
+            result[24] = 0;
+
+
 
             return result;
         }
@@ -47,8 +66,67 @@ namespace TemporalEncoding
         void MainWindowLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
             GenerateUiObjects(InputSize);
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    var pixel = new Rectangle
+                    {
+                        Width = DisplaySize,
+                        Height = DisplaySize,
+                        Fill = new SolidColorBrush { Color = Colors.White }
+                    };
+                    Canvas.SetLeft(pixel, j * DisplaySize);
+                    Canvas.SetTop(pixel, i * DisplaySize);
+                    _canvas1.Children.Add(pixel);
+
+                    pixel = new Rectangle
+                    {
+                        Width = DisplaySize,
+                        Height = DisplaySize,
+                        Fill = new SolidColorBrush { Color = Colors.White }
+                    };
+                    Canvas.SetLeft(pixel, j * DisplaySize);
+                    Canvas.SetTop(pixel, i * DisplaySize);
+                    _canvas2.Children.Add(pixel);
+                }
+            }
+
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    var pixel = new Rectangle
+                    {
+                        Width = DisplaySize,
+                        Height = DisplaySize,
+                        Fill = new SolidColorBrush { Color = Colors.White }
+                    };
+                    Canvas.SetLeft(pixel, j * DisplaySize);
+                    Canvas.SetTop(pixel, i * DisplaySize);
+                    _pCanvas1.Children.Add(pixel);
+
+                    pixel = new Rectangle
+                    {
+                        Width = DisplaySize,
+                        Height = DisplaySize,
+                        Fill = new SolidColorBrush { Color = Colors.White }
+                    };
+                    Canvas.SetLeft(pixel, j * DisplaySize);
+                    Canvas.SetTop(pixel, i * DisplaySize);
+                    _pCanvas2.Children.Add(pixel);
+                }
+            }
+
+
             _input = GenerateInput(InputSize * InputSize);
+
+            CalculateReceptiveFields(_input, out _offBipolarsInput, out _onBipolarsInput);
+
             DrawInput(_input);
+            DrawBipolars(_onBipolarsInput, _offBipolarsInput);
 
             for (int i = 0; i < ObservedSensors; i++)
             {
@@ -78,12 +156,64 @@ namespace TemporalEncoding
                     Height = 50,
                 };
 
-                _bipolars.Add(new BindingList<RealtimeGraphItem>());
+                _onBipolars.Add(new BindingList<RealtimeGraphItem>());
 
-                _contentHolder1.Children.Add(graph);
-                graph.SeriesSource = _bipolars[i];
+                _contentHolderOn.Children.Add(graph);
+                graph.SeriesSource = _onBipolars[i];
             }
 
+
+            //for (int i = 0; i < ObservedBipolars; i++)
+            //{
+            //    var graph = new RealtimeGraphControl
+            //    {
+            //        MaxY = 1,
+            //        MinY = -1,
+            //        AxisColor = Colors.Gray,
+            //        SeriesColor = Colors.Black,
+            //        Height = 50,
+            //    };
+
+            //    _offBipolars.Add(new BindingList<RealtimeGraphItem>());
+
+            //    _contentHolderOff.Children.Add(graph);
+            //    graph.SeriesSource = _offBipolars[i];
+            //}
+
+
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                var graph = new RealtimeGraphControl
+                {
+                    MaxY = 1,
+                    MinY = -0.3,
+                    AxisColor = Colors.Gray,
+                    SeriesColor = Colors.Black,
+                    Height = 50,
+                };
+
+                _spikeOnBipolars.Add(new BindingList<RealtimeGraphItem>());
+
+                _contentHolderSpikeOn.Children.Add(graph);
+                graph.SeriesSource = _spikeOnBipolars[i];
+            }
+
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                var graph = new RealtimeGraphControl
+                {
+                    MaxY = 1,
+                    MinY = -0.3,
+                    AxisColor = Colors.Gray,
+                    SeriesColor = Colors.Black,
+                    Height = 50,
+                };
+
+                _spikeOffBipolars.Add(new BindingList<RealtimeGraphItem>());
+
+                _contentHolderSpikeOff.Children.Add(graph);
+                graph.SeriesSource = _spikeOffBipolars[i];
+            }
 
             _timer = new DispatcherTimer
             {
@@ -92,6 +222,27 @@ namespace TemporalEncoding
             _timer.Tick += TimerTick;
             _last = DateTime.Now;
             _timer.IsEnabled = true;
+        }
+
+        private void CalculateReceptiveFields(byte[] input, out double[] offBipolarsInput, out double[] onBipolarsInput)
+        {
+            offBipolarsInput = new double[ObservedBipolars];
+            onBipolarsInput = new double[ObservedBipolars];
+
+            for (int j = 0; j < 3; j++)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var index = (i + 1) + (j + 1) * 5;
+                    var bipolarIndex = i + j * 3;
+
+                    var center = input[index];
+                    var outer = (input[index - 1] + input[index + 1] + input[index - 5] + input[index + 5] + input[index + 5 + 1] + _input[index + 5 - 1] + input[index - 5 + 1] + input[index - 5 - 1]) / 8.0;
+
+                    onBipolarsInput[bipolarIndex] = (center - outer);
+                    offBipolarsInput[bipolarIndex] = (outer - center);
+                }
+            }
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -103,42 +254,147 @@ namespace TemporalEncoding
                 int previousTime = _sensors[i].Count > 0 ? _sensors[i][_sensors[i].Count - 1].Time : 0;
                 var newItem = new RealtimeGraphItem
                 {
-                    Time = (int) (previousTime + span.TotalMilliseconds)+350,
-                    Value = _input[i] / 256.0 //_ran.NextDouble()
+                    Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                    Value = _input[i] / 256.0
                 };
 
                 _sensors[i].Add(newItem);
             }
 
 
-            for (int j = 0; j < 3; j++)
+            for (int i = 0; i < ObservedBipolars; i++)
             {
-                for (int i = 0; i < 3; i++) 
+                int previousTime = _onBipolars[i].Count > 0 ? _onBipolars[i][_onBipolars[i].Count - 1].Time : 0;
+                var newItem = new RealtimeGraphItem
                 {
-                    
-                    var index = (i + 1) + (j + 1)*5;
-                    var bipolarIndex = i + j * 3;
-
-                    int previousTime = _bipolars[bipolarIndex].Count > 0 ? _bipolars[bipolarIndex][_bipolars[bipolarIndex].Count - 1].Time : 0;
-                    var newItem = new RealtimeGraphItem
-                    {
-                        Time = (int)(previousTime + span.TotalMilliseconds) + 350,
-                        Value = (_input[index] -(_input[index - 1] + _input[index + 1] + _input[index - 3] + _input[index + 3] + _input[index + 3 + 1] + _input[index + 3 - 1] + +_input[index - 3 + 1] + _input[index - 3 - 1]) / 8.0) / 256.0 //_ran.NextDouble()
-                    };
-                    _bipolars[bipolarIndex].Add(newItem);
-
-                }
+                    Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                    Value = _onBipolarsInput[i] / 256.0
+                };
+                _onBipolars[i].Add(newItem);
             }
+
+            //for (int i = 0; i < ObservedBipolars; i++)
             //{
-            //    int previousTime = _bipolars[i].Count > 0 ? _bipolars[i][_bipolars[i].Count - 1].Time : 0;
+            //    int previousTime = _offBipolars[i].Count > 0 ? _offBipolars[i][_offBipolars[i].Count - 1].Time : 0;
             //    var newItem = new RealtimeGraphItem
             //    {
             //        Time = (int)(previousTime + span.TotalMilliseconds) + 350,
-            //        Value = _input[i] / 256.0 //_ran.NextDouble()
+            //        Value = _offBipolarsInput[i] / 256.0
             //    };
-
-            //    _bipolars[i].Add(newItem);
+            //    _offBipolars[i].Add(newItem);
             //}
+
+
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                int previousTime = _spikeOnBipolars[i].Count > 0 ? _spikeOnBipolars[i][_spikeOnBipolars[i].Count - 1].Time : 0;
+                double previousValue = _spikeOnBipolars[i].Count > 0 ? _spikeOnBipolars[i][_spikeOnBipolars[i].Count - 1].Value : 0;
+
+                if (previousValue >= 1)
+                {
+                    previousValue = -0.2;
+                }
+
+                var newValue = 0.0;
+
+                var v = (_onBipolarsInput[i]/256.0);
+                if (v < 0)
+                {
+                    v = v/10;
+                }
+
+                if (previousValue < 0)
+                {
+                    newValue = previousValue + v / 4.0  + 0.1;
+                }
+                else
+                {
+                    
+                    newValue = previousValue + v / 1.0 + 0.1;
+                }
+
+                if (newValue > 1)
+                {
+                    newValue = 1;
+                }
+
+                if (newValue < -0.2)
+                {
+                    newValue += 0.1;
+                }
+
+                var newItem = new RealtimeGraphItem
+                {
+                    Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                    Value = newValue
+                };
+                _spikeOnBipolars[i].Add(newItem);
+
+                if (newItem.Value > 0.9)
+                {
+                    ((Rectangle) _pCanvas1.Children[i]).Fill = new SolidColorBrush(Colors.DarkBlue);
+                }
+                else
+                {
+                    ((Rectangle)_pCanvas1.Children[i]).Fill = new SolidColorBrush(Colors.White);
+                }
+            }
+
+            for (int i = 0; i < ObservedBipolars; i++)
+            {
+                int previousTime = _spikeOffBipolars[i].Count > 0 ? _spikeOffBipolars[i][_spikeOffBipolars[i].Count - 1].Time : 0;
+                double previousValue = _spikeOffBipolars[i].Count > 0 ? _spikeOffBipolars[i][_spikeOffBipolars[i].Count - 1].Value : 0;
+
+                if (previousValue >= 1)
+                {
+                    previousValue = -0.2;
+                }
+
+                var newValue = 0.0;
+
+                var v = (_offBipolarsInput[i] / 256.0);
+                if (v < 0)
+                {
+                    v = v / 10;
+                }
+
+                if (previousValue < 0)
+                {
+                    newValue = previousValue + v / 8.0 + 0.1;
+                }
+                else
+                {
+
+                    newValue = previousValue + v / 1.0 + 0.1;
+                }
+
+                if (newValue > 1)
+                {
+                    newValue = 1;
+                }
+
+                if (newValue < -0.2)
+                {
+                    newValue += 0.1;
+                }
+
+                var newItem = new RealtimeGraphItem
+                {
+                    Time = (int)(previousTime + span.TotalMilliseconds) + 350,
+                    Value = newValue
+                };
+                _spikeOffBipolars[i].Add(newItem);
+
+                if (newItem.Value > 0.9)
+                {
+                    ((Rectangle)_pCanvas2.Children[i]).Fill = new SolidColorBrush(Colors.DarkBlue);
+                }
+                else
+                {
+                    ((Rectangle)_pCanvas2.Children[i]).Fill = new SolidColorBrush(Colors.White);
+                }
+            }
+
 
             _last = DateTime.Now;
         }
@@ -173,7 +429,26 @@ namespace TemporalEncoding
         private void GenerateClick(object sender, System.Windows.RoutedEventArgs e)
         {
             _input = GenerateInput(InputSize * InputSize);
+            CalculateReceptiveFields(_input, out _offBipolarsInput, out _onBipolarsInput);
             DrawInput(_input);
+            DrawBipolars(_onBipolarsInput, _offBipolarsInput);
+        }
+
+        private void DrawBipolars(double[] onBipolarsInput, double[] offBipolarsInput)
+        {
+
+
+            for (int i = 0; i < onBipolarsInput.Length; i++)
+            {
+                var color = (byte)((onBipolarsInput[i] + 255) / 2);
+                ((Rectangle)_canvas1.Children[i]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
+            }
+
+            for (int i = 0; i < offBipolarsInput.Length; i++)
+            {
+                var color = (byte)((offBipolarsInput[i] + 255) / 2);
+                ((Rectangle)_canvas2.Children[i]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
+            }
         }
     }
 }
