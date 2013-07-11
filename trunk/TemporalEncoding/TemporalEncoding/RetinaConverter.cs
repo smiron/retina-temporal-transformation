@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace TemporalEncoding
 {
@@ -11,37 +12,59 @@ namespace TemporalEncoding
 
         private static readonly Random Ran = new Random();
 
-        private const int PhotoreceptorsMatrixSize = 5;
-        private const int BipolarRfCenterSize = 1;
-        private const int BipolarRfOuterSize = 1;
-        private const int BipolarMatrixSize = (PhotoreceptorsMatrixSize - 2 * BipolarRfOuterSize) / BipolarRfCenterSize;
-        
+        private int PhotoreceptorsMatrixSize;
+        private int BipolarRfCenterSize;
+        private int BipolarRfOuterSize;
+        private int BipolarMatrixSize;
+
         private readonly byte[,] _photoreceptorsVoltage;
         private readonly int[,] _onBipolarsVoltage;
         private readonly int[,] _offBipolarsVoltage;
 
         #endregion
 
+        #region Properties
+
+        public int[,] OnBipolarsVoltage
+        {
+            get { return _onBipolarsVoltage; }
+        }
+
+        public int[,] OffBipolarsVoltage
+        {
+            get { return _offBipolarsVoltage; }
+        }
+
+        public byte[,] PhotoreceptorsVoltage
+        {
+            get { return _photoreceptorsVoltage; }
+        }
+
+        #endregion
 
         #region Instance
 
-        public RetinaConverter()
+        public RetinaConverter(int photoreceptorsMatrixSize = 5, int bipolarRfCenterSize = 1, int bipolarRfOuterSize = 1)
         {
+            BipolarRfCenterSize = bipolarRfCenterSize;
+            BipolarRfOuterSize = bipolarRfOuterSize;
+
+            PhotoreceptorsMatrixSize = photoreceptorsMatrixSize;
+            BipolarMatrixSize = (PhotoreceptorsMatrixSize - 2 * BipolarRfOuterSize) / BipolarRfCenterSize;
+
             _photoreceptorsVoltage = new byte[PhotoreceptorsMatrixSize, PhotoreceptorsMatrixSize];
             _offBipolarsVoltage = new int[BipolarMatrixSize, BipolarMatrixSize];
             _onBipolarsVoltage = new int[BipolarMatrixSize, BipolarMatrixSize];
 
-            GenerateRandomVoltage(_photoreceptorsVoltage);
+            GenerateInitialVoltage(_photoreceptorsVoltage);
             CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
         }
 
         #endregion
 
-
-
         #region Methods
 
-        private void GenerateRandomVoltage(byte[,] photoreceptorsVoltage)
+        private void GenerateInitialVoltage(byte[,] photoreceptorsVoltage)
         {
             for (int i = 0; i < photoreceptorsVoltage.GetLength(0); i++)
             {
@@ -54,6 +77,47 @@ namespace TemporalEncoding
             }
         }
 
+
+        private void GenerateRandomVoltage(byte[,] photoreceptorsVoltage)
+        {
+            for (int i = 0; i < photoreceptorsVoltage.GetLength(0); i++)
+            {
+                for (int j = 0; j < photoreceptorsVoltage.GetLength(1); j++)
+                {
+                    photoreceptorsVoltage[i, j] = (byte)Ran.Next(256);
+                }
+            }
+        }
+
+        private void LoadVoltageFromImage(Bitmap img, byte[,] photoreceptorsVoltage)
+        {
+            var startX = Ran.Next(img.Width - PhotoreceptorsMatrixSize);
+            var startY = Ran.Next(img.Height - PhotoreceptorsMatrixSize);
+
+            for (int i = 0; i < PhotoreceptorsMatrixSize; i++)
+            {
+                for (int j = 0; j < PhotoreceptorsMatrixSize; j++)
+                {
+                    Color pixel = img.GetPixel(i + startX, j + startY);
+                    byte grayScale = (byte)((pixel.R * 0.3) + (pixel.G * 0.59) + (pixel.B * 0.11));
+                    photoreceptorsVoltage[i, j] = grayScale;
+                }
+            }
+        }
+
+        public void NewFrame(string imgFile)
+        {
+            Bitmap img = new Bitmap(imgFile);
+            LoadVoltageFromImage(img, PhotoreceptorsVoltage);
+            CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
+        }
+
+        public void NewFrame()
+        {
+            GenerateRandomVoltage(_photoreceptorsVoltage);
+            CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
+        }
+
         private void CalculateBipolarsRfVoltage(byte[,] photoreceptorsVoltage, int[,] offBipolarsVoltage, int[,] onBipolarsVoltage)
         {
             for (int x = 0; x < BipolarMatrixSize; x++)
@@ -62,9 +126,9 @@ namespace TemporalEncoding
                 {
                     var center = 0.0;
                     var outer = 0.0;
-                    const int largeRadius = BipolarRfCenterSize + BipolarRfOuterSize;
-                    const int smallRadiusSquare = BipolarRfCenterSize * BipolarRfCenterSize;
-                    const int largeRadiusSquare = largeRadius * largeRadius;
+                    int largeRadius = BipolarRfCenterSize + BipolarRfOuterSize;
+                    int smallRadiusSquare = BipolarRfCenterSize * BipolarRfCenterSize;
+                    int largeRadiusSquare = largeRadius * largeRadius;
 
                     var centerCount = 0;
                     var outerCount = 0;
@@ -87,8 +151,8 @@ namespace TemporalEncoding
                         }
                     }
 
-                    offBipolarsVoltage[x, y] = (int)((outer / outerCount) - (center / centerCount));
-                    onBipolarsVoltage[x, y] = (int)((center / centerCount) - (outer / outerCount));
+                    offBipolarsVoltage[y,x] = (int)((outer / outerCount) - (center / centerCount));
+                    onBipolarsVoltage[y,x] = (int)((center / centerCount) - (outer / outerCount));
                 }
             }
         }
