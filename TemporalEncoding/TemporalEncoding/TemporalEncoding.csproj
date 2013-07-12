@@ -65,8 +65,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Htm\HtmCell.cs" />
+    <Compile Include="Htm\HtmColumn.cs" />
+    <Compile Include="Htm\HtmForwardSynapse.cs" />
+    <Compile Include="Htm\HtmInput.cs" />
+    <Compile Include="Htm\HtmLateralSynapse.cs" />
+    <Compile Include="Htm\HtmParameters.cs" />
+    <Compile Include="Htm\HtmSegment.cs" />
+    <Compile Include="Htm\HtmSpatialPooler.cs" />
     <Compile Include="RealtimeGraphItem.cs" />
     <Compile Include="Retina.cs" />
+    <Compile Include="RetinaFastUi.xaml.cs">
+      <DependentUpon>RetinaFastUi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RetinaGeneratorUi.xaml.cs">
       <DependentUpon>RetinaGeneratorUi.xaml</DependentUpon>
     </Compile>
@@ -82,6 +93,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="RetinaFastUi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RetinaGeneratorUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

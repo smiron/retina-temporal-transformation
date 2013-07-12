@@ -35,7 +35,7 @@ namespace TemporalEncoding
             
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(1)
+                Interval = TimeSpan.FromMilliseconds(10)
             };
             _timer.Tick += TimerTick;
             _timer.IsEnabled = true;

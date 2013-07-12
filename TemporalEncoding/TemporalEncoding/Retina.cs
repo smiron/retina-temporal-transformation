@@ -105,29 +105,11 @@ namespace TemporalEncoding
             _offMigetGanglionVoltage = new int[_bipolarMatrixSize, _bipolarMatrixSize];
             _onMigetGanglionActionPotentials = new bool[_bipolarMatrixSize, _bipolarMatrixSize];
             _offMigetGanglionActionPotentials = new bool[_bipolarMatrixSize, _bipolarMatrixSize];
-
-            GenerateInitialVoltage(_photoreceptorsVoltage);
-            CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
-            CalculateGanglionFrequency(_offBipolarsVoltage, OffMigetGanglionFrequency);
-            CalculateGanglionFrequency(_onBipolarsVoltage, OnMigetGanglionFrequency);
         }
 
         #endregion
 
         #region Methods
-
-        private void GenerateInitialVoltage(byte[,] photoreceptorsVoltage)
-        {
-            for (int i = 0; i < photoreceptorsVoltage.GetLength(0); i++)
-            {
-                for (int j = 0; j < photoreceptorsVoltage.GetLength(1); j++)
-                {
-                    photoreceptorsVoltage[i, j] = 255;
-                }
-                photoreceptorsVoltage[2, 2] = 0;
-            }
-        }
-
 
         private void GenerateRandomVoltage(byte[,] photoreceptorsVoltage)
         {
@@ -156,9 +138,17 @@ namespace TemporalEncoding
             }
         }
 
-        public void ChangeRetinaImage(string imgFile)
+        public void ChangeRetinaImage(string imgPath)
         {
-            var img = new Bitmap(imgFile);
+            var img = new Bitmap(imgPath);
+            LoadVoltageFromImage(img, PhotoreceptorsVoltage);
+            CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
+            CalculateGanglionFrequency(_offBipolarsVoltage, OffMigetGanglionFrequency);
+            CalculateGanglionFrequency(_onBipolarsVoltage, OnMigetGanglionFrequency);
+        }
+
+        public void ChangeRetinaImage(Bitmap img)
+        {
             LoadVoltageFromImage(img, PhotoreceptorsVoltage);
             CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
             CalculateGanglionFrequency(_offBipolarsVoltage, OffMigetGanglionFrequency);
@@ -227,7 +217,7 @@ namespace TemporalEncoding
                     }
                     else if (bipolarsVoltage[i, j] > 0)
                     {
-                        ganglionFrequency[i, j] = 1000 / (int) Math.Round((bipolarsVoltage[i, j] * plusInterval));
+                        ganglionFrequency[i, j] = 1000 / (int)Math.Round((bipolarsVoltage[i, j] * plusInterval));
                     }
                     else
                     {
@@ -239,7 +229,6 @@ namespace TemporalEncoding
 
         public void IterateTime()
         {
-            
             for (int i = 0; i < OnMigetGanglionVoltage.GetLength(0); i++)
             {
                 for (int j = 0; j < OnMigetGanglionVoltage.GetLength(1); j++)
@@ -268,11 +257,8 @@ namespace TemporalEncoding
                     }
                 }
             }
-
-           
         }
 
         #endregion
-
     }
 }
