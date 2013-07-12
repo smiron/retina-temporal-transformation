@@ -1,85 +1,138 @@
-﻿using System.Windows.Shapes;
+﻿using System;
+using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System.Windows.Threading;
+
 namespace TemporalEncoding
 {
     public partial class RetinaGeneratorUi
     {
 
-        private const int retinaSize = 50;
-        RetinaConverter retina;
-        private const int DisplaySize = 250/retinaSize;
+        private const int RetinaSize = 50;
+        private Retina _retina;
+        private const int DisplaySize = 250/RetinaSize;
+        DispatcherTimer _timer;
 
         public RetinaGeneratorUi()
         {
             InitializeComponent();
-            Loaded += RetinaGeneratorUi_Loaded;
+            Loaded += RetinaGeneratorUiLoaded;
         }
 
-        void RetinaGeneratorUi_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        void RetinaGeneratorUiLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
 
-            retina = new RetinaConverter(retinaSize,1,7);
+            _retina = new Retina(RetinaSize,1,7);
 
-            GenerateUiObjects(_canvas, retina.PhotoreceptorsVoltage.GetLength(0));
-            GenerateUiObjects(_offCanvas, retina.OnBipolarsVoltage.GetLength(0));
-            GenerateUiObjects(_onCanvas, retina.OffBipolarsVoltage.GetLength(0));
-                      
-
-            var mat = retina.GetSpikeMatrix();
+            GenerateUiObjects(_canvas, _retina.PhotoreceptorsVoltage.GetLength(0));
+            GenerateUiObjects(_offCanvas, _retina.OnBipolarsVoltage.GetLength(0));
+            GenerateUiObjects(_onCanvas, _retina.OffBipolarsVoltage.GetLength(0));
+            GenerateUiObjects(_onFrequencyCanvas, _retina.OnMigetGanglionFrequency.GetLength(0));
+            GenerateUiObjects(_offFrequencyCanvas, _retina.OffMigetGanglionFrequency.GetLength(0));
+            GenerateUiObjects(_onSpikeCanvas, _retina.OnMigetGanglionVoltage.GetLength(0));
+            GenerateUiObjects(_offSpikeCanvas, _retina.OffMigetGanglionVoltage.GetLength(0));
             
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(1)
+            };
+            _timer.Tick += TimerTick;
+            _timer.IsEnabled = true;
+
             Draw();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            _retina.IterateTime();
+
+            for (int i = 0; i < _retina.OnMigetGanglionActionPotentials.GetLength(0); i++)
+            {
+                for (int j = 0; j < _retina.OnMigetGanglionActionPotentials.GetLength(1); j++)
+                {
+                    var index = i + j * _retina.OnMigetGanglionActionPotentials.GetLength(0);
+
+                    ((Rectangle)_onSpikeCanvas.Children[index]).Fill = _retina.OnMigetGanglionActionPotentials[i, j] ? 
+                        new SolidColorBrush(Colors.DarkBlue) : 
+                        new SolidColorBrush(Colors.White);
+                }
+            }
+
+            for (int i = 0; i < _retina.OffMigetGanglionActionPotentials.GetLength(0); i++)
+            {
+                for (int j = 0; j < _retina.OffMigetGanglionActionPotentials.GetLength(1); j++)
+                {
+                    var index = i + j * _retina.OffMigetGanglionActionPotentials.GetLength(0);
+
+                    ((Rectangle)_offSpikeCanvas.Children[index]).Fill = _retina.OffMigetGanglionActionPotentials[i, j] ?
+                        new SolidColorBrush(Colors.DarkBlue) :
+                        new SolidColorBrush(Colors.White);
+                }
+            }
         }
 
         private void Draw()
         {
-            for (int i = 0; i < retina.PhotoreceptorsVoltage.GetLength(0); i++)
+            for (int i = 0; i < _retina.PhotoreceptorsVoltage.GetLength(0); i++)
             {
-                for (int j = 0; j < retina.PhotoreceptorsVoltage.GetLength(1); j++)
+                for (int j = 0; j < _retina.PhotoreceptorsVoltage.GetLength(1); j++)
                 {
-                    var index = i + j * retina.PhotoreceptorsVoltage.GetLength(0);
+                    var index = i + j * _retina.PhotoreceptorsVoltage.GetLength(0);
 
                     ((Rectangle)_canvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(
-                        retina.PhotoreceptorsVoltage[i, j],
-                        retina.PhotoreceptorsVoltage[i, j],
-                        retina.PhotoreceptorsVoltage[i, j]));
+                        _retina.PhotoreceptorsVoltage[i, j],
+                        _retina.PhotoreceptorsVoltage[i, j],
+                        _retina.PhotoreceptorsVoltage[i, j]));
 
                 }
             }
 
-            for (int i = 0; i < retina.OnBipolarsVoltage.GetLength(0); i++)
+            for (int i = 0; i < _retina.OnBipolarsVoltage.GetLength(0); i++)
             {
-                for (int j = 0; j < retina.OnBipolarsVoltage.GetLength(1); j++)
+                for (int j = 0; j < _retina.OnBipolarsVoltage.GetLength(1); j++)
                 {
-                    var index = i + j * retina.OnBipolarsVoltage.GetLength(0);
+                    var index = i + j * _retina.OnBipolarsVoltage.GetLength(0);
 
-                    if (retina.OnBipolarsVoltage[i, j] >= 0)
-                    {
-                        ((Rectangle)_onCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb((byte)retina.OnBipolarsVoltage[i, j], 0, 0));
-                    }
-                    else
-                    {
-                        ((Rectangle)_onCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(0, 0, (byte)System.Math.Abs(retina.OnBipolarsVoltage[i, j])));
-                    }
-
+                    ((Rectangle)_onCanvas.Children[index]).Fill = _retina.OnBipolarsVoltage[i, j] >= 0 ? 
+                        new SolidColorBrush(Color.FromRgb((byte)_retina.OnBipolarsVoltage[i, j], 0, 0)) : 
+                        new SolidColorBrush(Color.FromRgb(0, 0, (byte)Math.Abs(_retina.OnBipolarsVoltage[i, j])));
                 }
             }
 
-            for (int i = 0; i < retina.OffBipolarsVoltage.GetLength(0); i++)
+            for (int i = 0; i < _retina.OffBipolarsVoltage.GetLength(0); i++)
             {
-                for (int j = 0; j < retina.OffBipolarsVoltage.GetLength(1); j++)
+                for (int j = 0; j < _retina.OffBipolarsVoltage.GetLength(1); j++)
                 {
-                    var index = i + j * retina.OffBipolarsVoltage.GetLength(0);
+                    var index = i + j * _retina.OffBipolarsVoltage.GetLength(0);
 
-                    if (retina.OffBipolarsVoltage[i, j] >= 0)
-                    {
-                        ((Rectangle)_offCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb((byte)retina.OffBipolarsVoltage[i, j], 0, 0));
-                    }
-                    else
-                    {
-                        ((Rectangle)_offCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(0, 0, (byte)System.Math.Abs(retina.OffBipolarsVoltage[i, j])));
-                    }
+                    ((Rectangle)_offCanvas.Children[index]).Fill = _retina.OffBipolarsVoltage[i, j] >= 0 ? 
+                        new SolidColorBrush(Color.FromRgb((byte)_retina.OffBipolarsVoltage[i, j], 0, 0)) : 
+                        new SolidColorBrush(Color.FromRgb(0, 0, (byte)Math.Abs(_retina.OffBipolarsVoltage[i, j])));
+                }
+            }
 
+
+          
+
+            for (int i = 0; i < _retina.OnMigetGanglionFrequency.GetLength(0); i++)
+            {
+                for (int j = 0; j < _retina.OnMigetGanglionFrequency.GetLength(1); j++)
+                {
+                    var index = i + j * _retina.OnMigetGanglionFrequency.GetLength(0);
+
+                    var color = (byte)(_retina.OffMigetGanglionFrequency[i, j] * 1.28);
+                    ((Rectangle)_onFrequencyCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
+                }
+            }
+
+            for (int i = 0; i < _retina.OffMigetGanglionFrequency.GetLength(0); i++)
+            {
+                for (int j = 0; j < _retina.OffMigetGanglionFrequency.GetLength(1); j++)
+                {
+                    var index = i + j * _retina.OffMigetGanglionFrequency.GetLength(0);
+                    var color =  (byte)(_retina.OffMigetGanglionFrequency[i, j] * 1.28);
+                    ((Rectangle) _offFrequencyCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
             }
         }
@@ -103,15 +156,15 @@ namespace TemporalEncoding
             }
         }   
 
-        private void button1_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void Button1Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            retina.NewFrame();
+            _retina.ChangeRetinaImage();
             Draw();
         }
 
-        private void button2_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void Button2Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            retina.NewFrame(@"D:\Test1.JPG");
+            _retina.ChangeRetinaImage(@"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\Test1.JPG");
             Draw();
         }
     }
