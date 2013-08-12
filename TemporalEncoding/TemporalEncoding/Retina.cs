@@ -10,10 +10,6 @@ namespace TemporalEncoding
     {
         #region Fields
 
-        private const int MinFrequency = 1;
-        private const int BaseFrequency = 20;
-        private const int MaxFrequency = 200;
-
         private static readonly Random Ran = new Random();
 
         private readonly int _photoreceptorsMatrixSize;
@@ -145,6 +141,15 @@ namespace TemporalEncoding
             CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
             CalculateGanglionFrequency(_offBipolarsVoltage, OffMigetGanglionFrequency);
             CalculateGanglionFrequency(_onBipolarsVoltage, OnMigetGanglionFrequency);
+            
+            for (int i = 0; i < OnMigetGanglionVoltage.GetLength(0); i++)
+            {
+                for (int j = 0; j < OnMigetGanglionVoltage.GetLength(1); j++)
+                {
+                    _onMigetGanglionVoltage[i, j] = Ran.Next(OnMigetGanglionFrequency[i,j]);
+                    _offMigetGanglionVoltage[i, j] = Ran.Next(OffMigetGanglionFrequency[i, j]);
+                }
+            }
         }
 
         public void ChangeRetinaImage(Bitmap img)
@@ -204,24 +209,21 @@ namespace TemporalEncoding
 
         private void CalculateGanglionFrequency(int[,] bipolarsVoltage, int[,] ganglionFrequency)
         {
-            const double plusInterval = (MaxFrequency - BaseFrequency) / 256.0;
-            const double minusInterval = (BaseFrequency - MinFrequency) / 256.0;
-
             for (int i = 0; i < bipolarsVoltage.GetLength(0); i++)
             {
                 for (int j = 0; j < bipolarsVoltage.GetLength(1); j++)
                 {
                     if (bipolarsVoltage[i, j] == 0)
                     {
-                        ganglionFrequency[i, j] = 1000 / BaseFrequency;
+                        ganglionFrequency[i, j] = 128;
                     }
                     else if (bipolarsVoltage[i, j] > 0)
                     {
-                        ganglionFrequency[i, j] = 1000 / (int)Math.Round((bipolarsVoltage[i, j] * plusInterval));
+                        ganglionFrequency[i, j] =  (int)(128 + bipolarsVoltage[i, j] * 0.5);
                     }
                     else
                     {
-                        ganglionFrequency[i, j] = 1000 / (int)(20 - (Math.Abs(bipolarsVoltage[i, j]) * minusInterval));
+                        ganglionFrequency[i, j] =  (int)(128 + bipolarsVoltage[i, j] * 0.5);
                     }
                 }
             }
@@ -233,8 +235,8 @@ namespace TemporalEncoding
             {
                 for (int j = 0; j < OnMigetGanglionVoltage.GetLength(1); j++)
                 {
-                    OnMigetGanglionVoltage[i, j]++;
-                    OffMigetGanglionVoltage[i, j]++;
+                    OnMigetGanglionVoltage[i, j]+=1;
+                    OffMigetGanglionVoltage[i, j]+=1;
 
                     if (OnMigetGanglionVoltage[i, j] > OnMigetGanglionFrequency[i, j])
                     {

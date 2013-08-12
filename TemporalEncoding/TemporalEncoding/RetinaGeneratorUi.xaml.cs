@@ -121,7 +121,7 @@ namespace TemporalEncoding
                 {
                     var index = i + j * _retina.OnMigetGanglionFrequency.GetLength(0);
 
-                    var color = (byte)(_retina.OffMigetGanglionFrequency[i, j] * 1.28);
+                    var color = (byte)(_retina.OffMigetGanglionFrequency[i, j]  );
                     ((Rectangle)_onFrequencyCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
             }
@@ -131,7 +131,7 @@ namespace TemporalEncoding
                 for (int j = 0; j < _retina.OffMigetGanglionFrequency.GetLength(1); j++)
                 {
                     var index = i + j * _retina.OffMigetGanglionFrequency.GetLength(0);
-                    var color =  (byte)(_retina.OffMigetGanglionFrequency[i, j] * 1.28);
+                    var color =  (byte)(_retina.OffMigetGanglionFrequency[i, j] );
                     ((Rectangle) _offFrequencyCanvas.Children[index]).Fill = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
             }

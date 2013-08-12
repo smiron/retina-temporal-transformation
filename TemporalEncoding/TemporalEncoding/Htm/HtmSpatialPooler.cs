@@ -8,9 +8,11 @@ namespace TemporalEncoding.Htm
     {
         #region Fields
 
-        private static readonly Random Ran = new Random();
         private List<HtmColumn> _activeColumns;
         private List<HtmColumn> _columnList;
+
+        private HtmColumn[,] _columnsMatrix;
+
         private double _inhibitionRadius;
         private double _inhibitionRadiusBefore;
         private HtmInput _input;
@@ -101,7 +103,7 @@ namespace TemporalEncoding.Htm
                 }
             }
 
-            Console.WriteLine("Active columns : {0}", _activeColumns.Count);
+            //Console.WriteLine("Active columns : {0}", _activeColumns.Count);
         }
 
         /// <summary>
@@ -217,17 +219,15 @@ namespace TemporalEncoding.Htm
         /// <param name="input"></param>
         public void Init(HtmInput input)
         {
-            //_input = input;
-            //_columnList = new List<HtmColumn>();
-            //_activeColumns = new List<HtmColumn>();
+            _input = input;
+            _columnList = new List<HtmColumn>();
+            _activeColumns = new List<HtmColumn>();
 
-            //var inputIndexList = new List<int>();
+            //input.Matrix
+            _columnsMatrix = new HtmColumn[6,6];
 
 
-            //for (int i = 0; i < input.Matrix.GetLength(0) * input.Matrix.GetLength(1); i++)
-            //{
-            //    inputIndexList.Add(i);
-            //}
+           
 
             //IEnumerable<KMeansCluster> clusters = KMeansAlgorithm.FindMatrixClusters(input.Matrix.GetLength(0), input.Matrix.GetLength(1), HtmParameters.ColumnsCount);
             //foreach (KMeansCluster cluster in clusters)
@@ -257,7 +257,7 @@ namespace TemporalEncoding.Htm
             //}
 
 
-            //_activeColumns = new List<HtmColumn>();
+            _activeColumns = new List<HtmColumn>();
         }
 
         #endregion
