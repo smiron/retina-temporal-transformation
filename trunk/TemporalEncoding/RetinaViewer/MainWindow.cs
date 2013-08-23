@@ -23,6 +23,17 @@ namespace RetinaViewer
         void MainWindowLoad(object sender, EventArgs e)
         {
             _retina = new Retina(new Size(RetinaSizeX, RetinaSizeY));
+
+            var parvoParam = _retina.Parameters.OPLandIplParvo;
+            parvoParam.GanglionCellsSensitivity = 0.89f;
+            parvoParam.HorizontalCellsGain = 0.3f;
+
+            _retina.Parameters = new Retina.RetinaParameters
+            {
+                IplMagno = _retina.Parameters.IplMagno,
+                OPLandIplParvo = parvoParam
+            };
+
             _retina.ClearBuffers();
         }
 
@@ -79,17 +90,19 @@ namespace RetinaViewer
                             new Rectangle(0, 0, frame.Bitmap.Width, frame.Bitmap.Height),
                             GraphicsUnit.Pixel);
             }
+
+            var original = new Image<Bgr, byte>(target);
             
-            _retina.Run(new Image<Bgr, byte>(target));
-
-
-            var aa = new Image<Bgr, byte>(target);
+            _retina.Run(original);
             
+            
+            var parvo = _retina.GetParvo();
 
-            var result = aa.ConcateVertical(_retina.GetParvo());
+            var grayParvo = parvo.Convert<Gray, byte>().Convert<Bgr, byte>();
 
-            var r =result.ConcateVertical(_retina.GetMagno().Convert<Bgr, byte>());
+            var mango = _retina.GetMagno().Convert<Bgr, byte>();
 
+            var r = original.ConcateVertical(parvo).ConcateVertical(grayParvo).ConcateVertical(mango);
 
             //because we are using an autosize picturebox we need to do a thread safe update
             DisplayImage(r.ToBitmap());
