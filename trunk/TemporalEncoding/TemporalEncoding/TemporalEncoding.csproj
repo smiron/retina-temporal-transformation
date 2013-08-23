@@ -39,6 +39,30 @@
     <Reference Include="Direct2D">
       <HintPath>Lib\Direct2D.dll</HintPath>
     </Reference>
+    <Reference Include="Emgu.CV">
+      <HintPath>Lib\Emgu\Emgu.CV.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.GPU">
+      <HintPath>Lib\Emgu\Emgu.CV.GPU.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.ML">
+      <HintPath>Lib\Emgu\Emgu.CV.ML.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.OCR">
+      <HintPath>Lib\Emgu\Emgu.CV.OCR.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.Stitching">
+      <HintPath>Lib\Emgu\Emgu.CV.Stitching.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.UI">
+      <HintPath>Lib\Emgu\Emgu.CV.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.VideoStab">
+      <HintPath>Lib\Emgu\Emgu.CV.VideoStab.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.Util">
+      <HintPath>Lib\Emgu\Emgu.Util.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.DirectX">
       <HintPath>Lib\Microsoft.WindowsAPICodePack.DirectX.dll</HintPath>
     </Reference>
@@ -48,6 +72,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />

@@ -2,8 +2,14 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net.Mime;
+using System.Threading;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using Emgu.CV;
+using RetinaA = Emgu.CV.Retina;
+using Emgu.CV.Structure;
+using Emgu.CV.UI;
 
 namespace TemporalEncoding
 {
@@ -11,10 +17,11 @@ namespace TemporalEncoding
     {
 
         private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\Test1.JPG";
-        private const int RetinaSize = 300;
+        private const int RetinaSizeX = 100;
+        private const int RetinaSizeY = 100;
         private static readonly Random Ran = new Random();
-        DispatcherTimer _timer;
-        private Retina _retina;
+        private RetinaA _retina;
+        private Capture _capture; //Camera
 
         public RetinaFastUi()
         {
@@ -24,50 +31,11 @@ namespace TemporalEncoding
 
         private void RetinaFastUiLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            _retina = new Retina(RetinaSize, 1, 7);
-
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(1)
-            };
-            _timer.Tick += TimerTick;
-            _timer.IsEnabled = true;
+            _retina = new Emgu.CV.Retina(new Size(RetinaSizeX, RetinaSizeY));
+            _retina.ClearBuffers();
         }
 
-        private int _counter = 0;
-
-        private void TimerTick(object sender, EventArgs e)
-        {
-
-            if (_counter == 20)
-            {
-                _counter = 0;
-                ChangeRetinaImage();
-            }
-
-            _retina.IterateTime();
-
-            var target = new Bitmap(_retina.OnMigetGanglionActionPotentials.GetLength(0), _retina.OnMigetGanglionActionPotentials.GetLength(1));
-
-            for (int i = 0; i < _retina.OnMigetGanglionActionPotentials.GetLength(0); i++)
-            {
-                for (int j = 0; j < _retina.OnMigetGanglionActionPotentials.GetLength(1); j++)
-                {
-                    if (_retina.OnMigetGanglionActionPotentials[i, j])
-                    {
-                        target.SetPixel(i, j, Color.DarkBlue);
-                    }
-                    else
-                    {
-                        target.SetPixel(i, j, Color.White);
-                    }
-                }
-            }
-
-            _onMidgetGanglions.Source = ConvertToBitmapImage(target);
-
-            _counter++;
-        }
+        
 
         private void LoadButtonClick(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -76,35 +44,84 @@ namespace TemporalEncoding
 
         private void ChangeRetinaImage()
         {
-            var src = Image.FromFile(ImgPath) as Bitmap;
 
-            if (src == null)
-            {
-                return;
-            }
-
-            var startX = Ran.Next(src.Width - RetinaSize);
-            var startY = Ran.Next(src.Height - RetinaSize);
-
-            var cropRect = new Rectangle(startX, startY, RetinaSize, RetinaSize);
+           //SetupCapture();
 
 
-            var target = new Bitmap(cropRect.Width, cropRect.Height);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),
-                            cropRect,
-                            GraphicsUnit.Pixel);
-            }
 
-            var grayImage = MakeGrayscale3(target);
 
-            _retina.ChangeRetinaImage(grayImage);
 
-            var bi = ConvertToBitmapImage(grayImage);
 
-            _source.Source = bi;
+            //var src = Image.FromFile(ImgPath) as Bitmap;
+
+            //if (src == null)
+            //{
+            //    return;
+            //}
+
+            //var startX = Ran.Next(src.Width - RetinaSizeX);
+            //var startY = Ran.Next(src.Height - RetinaSizeY);
+
+            //var cropRect = new Rectangle(startX, startY, RetinaSizeX, RetinaSizeY);
+
+
+            //var target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),
+            //                cropRect,
+            //                GraphicsUnit.Pixel);
+            //}
+
+
+            //_retina.Run(new Image<Bgr, byte>(target));
+
+            //var parvo = _retina.GetParvo();
+
+
+            //var bi = ConvertToBitmapImage(parvo.Bitmap);
+
+            //_source.Source = bi;
+
+
+            //var v = new ImageViewer();
+
+            //using (var capture = new Capture(0))
+            //using (var retina = new RetinaA(new Size(RetinaSizeX, RetinaSizeY), true, RetinaA.ColorSamplingMethod.ColorBayer, false, 1.0, 10.0))
+            //{
+
+
+
+            //    while (true)
+            //    {
+            //        Image<Bgr, byte> img = capture.QuerySmallFrame();
+
+
+            //        var cropRect = new Rectangle(0, 0, RetinaSizeX, RetinaSizeY);
+            //        var target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            //        using (Graphics g = Graphics.FromImage(target))
+            //        {
+            //            g.DrawImage(img.Bitmap, new Rectangle(0, 0, target.Width, target.Height),
+            //                        cropRect,
+            //                        GraphicsUnit.Pixel);
+            //        }
+
+            //        retina.Run(new Image<Bgr, byte>(target));
+
+            //        v.Image = img.ConcateVertical(retina.GetParvo().ConcateHorizontal(retina.GetMagno().Convert<Bgr, byte>()));
+
+
+
+            //        //_source.Source = ConvertToBitmapImage(v.Image.Bitmap);
+            //        v.Show();
+
+            //        Thread.Sleep(1000);
+
+            //    }
+            //}
         }
 
         private static BitmapImage ConvertToBitmapImage(Bitmap grayImage)
