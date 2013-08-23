@@ -18,6 +18,13 @@ namespace RetinaViewer
         {
             InitializeComponent();
             Load += MainWindowLoad;
+            Closing += MainWindowClosing;
+        }
+
+        void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _capture.Stop();
+            _capture.Dispose();
         }
 
         void MainWindowLoad(object sender, EventArgs e)
