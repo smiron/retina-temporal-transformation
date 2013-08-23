@@ -141,12 +141,12 @@ namespace TemporalEncoding
             CalculateBipolarsRfVoltage(_photoreceptorsVoltage, _offBipolarsVoltage, _onBipolarsVoltage);
             CalculateGanglionFrequency(_offBipolarsVoltage, OffMigetGanglionFrequency);
             CalculateGanglionFrequency(_onBipolarsVoltage, OnMigetGanglionFrequency);
-            
+
             for (int i = 0; i < OnMigetGanglionVoltage.GetLength(0); i++)
             {
                 for (int j = 0; j < OnMigetGanglionVoltage.GetLength(1); j++)
                 {
-                    _onMigetGanglionVoltage[i, j] = Ran.Next(OnMigetGanglionFrequency[i,j]);
+                    _onMigetGanglionVoltage[i, j] = Ran.Next(OnMigetGanglionFrequency[i, j]);
                     _offMigetGanglionVoltage[i, j] = Ran.Next(OffMigetGanglionFrequency[i, j]);
                 }
             }
@@ -201,8 +201,8 @@ namespace TemporalEncoding
                         }
                     }
 
-                    offBipolarsVoltage[y, x] = (int)((outer / outerCount) - (center / centerCount));
-                    onBipolarsVoltage[y, x] = (int)((center / centerCount) - (outer / outerCount));
+                    offBipolarsVoltage[y, x] = (int)((outer / outerCount) - ((center / centerCount) * 1.1));
+                    onBipolarsVoltage[y, x] = (int)((center / centerCount) - ((outer / outerCount) * 1.1));
                 }
             }
         }
@@ -219,11 +219,11 @@ namespace TemporalEncoding
                     }
                     else if (bipolarsVoltage[i, j] > 0)
                     {
-                        ganglionFrequency[i, j] =  (int)(128 + bipolarsVoltage[i, j] * 0.5);
+                        ganglionFrequency[i, j] = (int)(128 + bipolarsVoltage[i, j] * 0.5);
                     }
                     else
                     {
-                        ganglionFrequency[i, j] =  (int)(128 + bipolarsVoltage[i, j] * 0.5);
+                        ganglionFrequency[i, j] = (int)(128 + bipolarsVoltage[i, j] * 0.5);
                     }
                 }
             }
@@ -235,8 +235,8 @@ namespace TemporalEncoding
             {
                 for (int j = 0; j < OnMigetGanglionVoltage.GetLength(1); j++)
                 {
-                    OnMigetGanglionVoltage[i, j]+=1;
-                    OffMigetGanglionVoltage[i, j]+=1;
+                    OnMigetGanglionVoltage[i, j] += 1;
+                    OffMigetGanglionVoltage[i, j] += 1;
 
                     if (OnMigetGanglionVoltage[i, j] > OnMigetGanglionFrequency[i, j])
                     {

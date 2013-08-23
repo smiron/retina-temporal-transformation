@@ -1,8 +1,8 @@
 ﻿<Window x:Class="TemporalEncoding.RetinaGeneratorUi"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="RetinaGeneratorUi" Height="640" Width="1228">
-    <Grid>
+        Title="RetinaGeneratorUi" Height="607" Width="1386">
+    <Grid Height="572">
         <Border BorderBrush="Black" BorderThickness="1" Height="252" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="252">
             <Canvas Name="_canvas" VerticalAlignment="Top" />
         </Border>
@@ -12,18 +12,18 @@
         <Border BorderBrush="Black" BorderThickness="1" Height="249" HorizontalAlignment="Left" Margin="527,13,0,0" VerticalAlignment="Top" Width="279">
             <Canvas Name="_offCanvas" VerticalAlignment="Top" />
         </Border>
-        <Button Content="Generate Random" Height="23" HorizontalAlignment="Left" Margin="28,465,0,0" Name="button1" VerticalAlignment="Top" Width="117" Click="Button1Click" />
-        <Button Content="Generate Image" Height="23" HorizontalAlignment="Left" Margin="28,494,0,0" Name="button2" VerticalAlignment="Top" Width="117" Click="Button2Click" />
-        <Border BorderBrush="Black" BorderThickness="1" Height="250" HorizontalAlignment="Left" Margin="267,276,0,0" VerticalAlignment="Top" Width="253">
+        <Button Content="Generate Random" Height="23" HorizontalAlignment="Left" Margin="11,437,0,0" Name="button1" VerticalAlignment="Top" Width="117" Click="Button1Click" />
+        <Button Content="Generate Image" Height="23" HorizontalAlignment="Left" Margin="11,466,0,0" Name="button2" VerticalAlignment="Top" Width="117" Click="Button2Click" />
+        <Border BorderBrush="Black" BorderThickness="1" Height="228" HorizontalAlignment="Left" Margin="267,276,0,0" VerticalAlignment="Top" Width="253">
             <Canvas Name="_onFrequencyCanvas" VerticalAlignment="Top" />
         </Border>
-        <Border BorderBrush="Black" BorderThickness="1" Height="249" HorizontalAlignment="Right" Margin="0,277,399,0" VerticalAlignment="Top" Width="279">
+        <Border BorderBrush="Black" BorderThickness="1" Height="227" HorizontalAlignment="Right" Margin="0,277,557,0" VerticalAlignment="Top" Width="279">
             <Canvas Name="_offFrequencyCanvas" VerticalAlignment="Top" />
         </Border>
-        <Border BorderBrush="Black" BorderThickness="1" Height="250" HorizontalAlignment="Left" Margin="827,12,0,0" VerticalAlignment="Top" Width="253">
+        <Border BorderBrush="Black" BorderThickness="1" Height="10" HorizontalAlignment="Left" Margin="12,519,0,0" VerticalAlignment="Top" Width="1330">
             <Canvas Name="_onSpikeCanvas" VerticalAlignment="Top" />
         </Border>
-        <Border BorderBrush="Black" BorderThickness="1" Height="249" HorizontalAlignment="Right" Margin="0,278,126,0" VerticalAlignment="Top" Width="252">
+        <Border BorderBrush="Black" BorderThickness="1" Height="10" HorizontalAlignment="Left" Margin="12,538,0,0" VerticalAlignment="Top" Width="1329">
             <Canvas Name="_offSpikeCanvas" VerticalAlignment="Top" />
         </Border>
     </Grid>
