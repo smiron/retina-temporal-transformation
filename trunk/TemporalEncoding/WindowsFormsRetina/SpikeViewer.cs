@@ -6,22 +6,61 @@ namespace WindowsFormsRetina
 {
     public partial class SpikeViewer : Form
     {
+        private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\TestImage.png";
+        private readonly Random _ran = new Random();
+        private readonly SpikeConverter _convertor = new SpikeConverter();
+
         public SpikeViewer()
         {
             InitializeComponent();
             Load += SpikeViewerLoad;
         }
 
+
+
+        private byte[,] GetInput()
+        {
+            const int size = 16;
+
+            var result = new byte[size,size];
+
+
+            var src = Image.FromFile(ImgPath);
+            
+            var startX = _ran.Next(src.Width - size);
+            var startY = _ran.Next(src.Height - size);
+
+            var cropRect = new Rectangle(startX, startY, size, size);
+            
+            var target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect,GraphicsUnit.Pixel);
+            }
+
+            for (int i = 0; i < target.Width; i++)
+            {
+                for (int j = 0; j < target.Height; j++)
+                {
+                    result[i, j] = target.GetPixel(i, j).R;
+                }
+            }
+
+            return result;
+        }
+
+
         void SpikeViewerLoad(object sender, EventArgs e)
         {
-            var convertor = new SpikeConverter();
+            DoLoadSpikes();
+        }
 
-            var input = new byte[,] {  {16,  26,  100, 20 },
-                                       {64,  200, 64, 36  }, 
-                                       {128, 64,  14, 255 },
-                                       {31, 137,  12, 165 } };
+        private void DoLoadSpikes()
+        {
+            var input = GetInput();
 
-            convertor.SetInput(input);
+            _convertor.SetInput(input);
 
             var bmp = new Bitmap(1200, 600);
 
@@ -35,13 +74,13 @@ namespace WindowsFormsRetina
 
                 var paddingX = 0;
                 var paddingY = 0;
-                const int size = 7;
+                const int size = 2;
                 const int maxSize = 350;
 
 
                 for (int k = 0; k < maxSize; k++)
                 {
-                    var result = convertor.IterateResult();
+                    var result = _convertor.IterateResult();
 
                     for (int i = 0; i < result.GetLength(0); i++)
                     {
@@ -49,32 +88,27 @@ namespace WindowsFormsRetina
                         {
                             if (result[i, j])
                             {
-                                gfx.FillRectangle(Brushes.Blue, i * size + paddingX, j * size + paddingY, size, size);
+                                gfx.FillRectangle(Brushes.Blue, i*size + paddingX, j*size + paddingY, size, size);
                             }
                             else
                             {
-                                gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY, size, size);
+                                gfx.FillRectangle(Brushes.Black, i*size + paddingX, j*size + paddingY, size, size);
                             }
                         }
                     }
 
-                    paddingX = ((size * (result.GetLength(0) + 1)) * (k % 32));
-                    paddingY = ((size * (result.GetLength(1) + 1)) * (k / 32));
-
+                    paddingX = ((size*(result.GetLength(0) + 1))*(k%32));
+                    paddingY = ((size*(result.GetLength(1) + 1))*(k/32));
                 }
             }
 
 
-
-
-
-
             img.Image = bmp;
+        }
 
-
-
-
-
+        private void LoadSpikes(object sender, EventArgs e)
+        {
+            DoLoadSpikes();
         }
     }
 }
