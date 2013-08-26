@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalEncoding", "Tempora
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetinaViewer", "RetinaViewer\RetinaViewer.csproj", "{036A63F1-209B-40C1-9477-68D2F8EC774A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsRetina", "WindowsFormsRetina\WindowsFormsRetina.csproj", "{04EF183B-E510-4EE1-AD83-264E3B019017}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,6 +21,10 @@ Global
 		{036A63F1-209B-40C1-9477-68D2F8EC774A}.Debug|x86.Build.0 = Debug|x86
 		{036A63F1-209B-40C1-9477-68D2F8EC774A}.Release|x86.ActiveCfg = Release|x86
 		{036A63F1-209B-40C1-9477-68D2F8EC774A}.Release|x86.Build.0 = Release|x86
+		{04EF183B-E510-4EE1-AD83-264E3B019017}.Debug|x86.ActiveCfg = Debug|x86
+		{04EF183B-E510-4EE1-AD83-264E3B019017}.Debug|x86.Build.0 = Debug|x86
+		{04EF183B-E510-4EE1-AD83-264E3B019017}.Release|x86.ActiveCfg = Release|x86
+		{04EF183B-E510-4EE1-AD83-264E3B019017}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,8 +10,8 @@ namespace RetinaViewer
     {
         private Capture _capture;
         private Retina _retina;
-        private const int RetinaSizeX = 200;
-        private const int RetinaSizeY = 100;
+        private const int RetinaSizeX = 210;
+        private const int RetinaSizeY = 104;
         private bool _captureInProgress;
 
         public MainWindow()
