@@ -15,9 +15,7 @@ namespace WindowsFormsRetina
             InitializeComponent();
             Load += SpikeViewerLoad;
         }
-
-
-
+        
         private byte[,] GetInput()
         {
             const int size = 16;
@@ -49,13 +47,7 @@ namespace WindowsFormsRetina
 
             return result;
         }
-
-
-        void SpikeViewerLoad(object sender, EventArgs e)
-        {
-            DoLoadSpikes();
-        }
-
+        
         private void DoLoadSpikes()
         {
             var input = GetInput();
@@ -104,6 +96,11 @@ namespace WindowsFormsRetina
 
 
             img.Image = bmp;
+        }
+
+        void SpikeViewerLoad(object sender, EventArgs e)
+        {
+            DoLoadSpikes();
         }
 
         private void LoadSpikes(object sender, EventArgs e)
