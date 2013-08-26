@@ -28,47 +28,60 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.img = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.img)).BeginInit();
+            this.output = new System.Windows.Forms.PictureBox();
+            this.Generate = new System.Windows.Forms.Button();
+            this.source = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.output)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.source)).BeginInit();
             this.SuspendLayout();
             // 
-            // img
+            // output
             // 
-            this.img.Location = new System.Drawing.Point(12, 12);
-            this.img.Name = "img";
-            this.img.Size = new System.Drawing.Size(1158, 530);
-            this.img.TabIndex = 0;
-            this.img.TabStop = false;
+            this.output.Location = new System.Drawing.Point(61, 12);
+            this.output.Name = "output";
+            this.output.Size = new System.Drawing.Size(1109, 530);
+            this.output.TabIndex = 0;
+            this.output.TabStop = false;
             // 
-            // button1
+            // Generate
             // 
-            this.button1.Location = new System.Drawing.Point(82, 548);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.LoadSpikes);
+            this.Generate.Location = new System.Drawing.Point(0, 548);
+            this.Generate.Name = "Generate";
+            this.Generate.Size = new System.Drawing.Size(75, 23);
+            this.Generate.TabIndex = 1;
+            this.Generate.Text = "button1";
+            this.Generate.UseVisualStyleBackColor = true;
+            this.Generate.Click += new System.EventHandler(this.LoadSpikes);
+            // 
+            // source
+            // 
+            this.source.Location = new System.Drawing.Point(0, 12);
+            this.source.Name = "source";
+            this.source.Size = new System.Drawing.Size(55, 48);
+            this.source.TabIndex = 2;
+            this.source.TabStop = false;
             // 
             // SpikeViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 568);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.img);
+            this.Controls.Add(this.source);
+            this.Controls.Add(this.Generate);
+            this.Controls.Add(this.output);
             this.Name = "SpikeViewer";
             this.Text = "SpikeViewer";
-            ((System.ComponentModel.ISupportInitialize)(this.img)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.output)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.source)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox img;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PictureBox output;
+        private System.Windows.Forms.Button Generate;
+        private System.Windows.Forms.PictureBox source;
     }
 }
 
