@@ -45,6 +45,8 @@ namespace WindowsFormsRetina
                 }
             }
 
+            source.Image = target;
+
             return result;
         }
         
@@ -66,7 +68,7 @@ namespace WindowsFormsRetina
 
                 var paddingX = 0;
                 var paddingY = 0;
-                const int size = 2;
+                const int size = 1;
                 const int maxSize = 350;
 
 
@@ -95,7 +97,7 @@ namespace WindowsFormsRetina
             }
 
 
-            img.Image = bmp;
+            output.Image = bmp;
         }
 
         void SpikeViewerLoad(object sender, EventArgs e)
