@@ -68,7 +68,7 @@ namespace WindowsFormsRetina
 
                 var paddingX = 0;
                 var paddingY = 0;
-                const int size = 1;
+                const int size = 2;
                 const int maxSize = 350;
 
 
