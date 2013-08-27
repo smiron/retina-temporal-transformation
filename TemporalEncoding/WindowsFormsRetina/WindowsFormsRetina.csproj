@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Htm\HtmCell.cs" />
+    <Compile Include="Htm\HtmColumn.cs" />
+    <Compile Include="Htm\HtmForwardSynapse.cs" />
+    <Compile Include="Htm\HtmInput.cs" />
+    <Compile Include="Htm\HtmLateralSynapse.cs" />
+    <Compile Include="Htm\HtmParameters.cs" />
+    <Compile Include="Htm\HtmSegment.cs" />
+    <Compile Include="Htm\HtmSpatialPooler.cs" />
     <Compile Include="SpikeConverter.cs" />
     <Compile Include="SpikeViewer.cs">
       <SubType>Form</SubType>
