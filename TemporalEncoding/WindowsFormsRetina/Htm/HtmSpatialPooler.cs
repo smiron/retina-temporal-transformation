@@ -11,8 +11,6 @@ namespace WindowsFormsRetina.Htm
         private List<HtmColumn> _activeColumns;
         private List<HtmColumn> _columnList;
 
-        private HtmColumn[,] _columnsMatrix;
-
         private double _inhibitionRadius;
         private double _inhibitionRadiusBefore;
         private HtmInput _input;
@@ -46,6 +44,12 @@ namespace WindowsFormsRetina.Htm
             Overlap();
             Inhibition();
             Learn();
+        }
+        
+
+        public void SetInput(bool[,] matrix)
+        {
+            _input.Matrix = matrix;
         }
 
         /// <summary>
@@ -216,43 +220,62 @@ namespace WindowsFormsRetina.Htm
         /// input region, and the permanence values have a bias towards this center (they have higher values near the
         /// center).
         /// </summary>
-        /// <param name="input"></param>
-        public void Init(HtmInput input)
+        private void Init(int inputWidth, int inputHeight, int columnWidth, int columnHeight)
         {
-            _input = input;
+            _input = new HtmInput
+            {
+                Matrix = new bool[inputWidth, inputHeight]
+            };
+
             _columnList = new List<HtmColumn>();
             _activeColumns = new List<HtmColumn>();
-            
-            _columnsMatrix = new HtmColumn[_input.Matrix.GetLength(0), _input.Matrix.GetLength(1)];
-            
 
-            //IEnumerable<KMeansCluster> clusters = KMeansAlgorithm.FindMatrixClusters(input.Matrix.GetLength(0), input.Matrix.GetLength(1), HtmParameters.ColumnsCount);
-            //foreach (KMeansCluster cluster in clusters)
-            //{
-            //    List<int> htmSynapses = inputIndexList.Shuffle(Ran).ToList();
-            //    var synapses = new List<HtmForwardSynapse>();
+            var size = columnWidth * columnHeight;
 
-            //    for (int j = 0; j < HtmParameters.AmountOfPotentialSynapses; j++)
-            //    {
-            //        var newSynapse = new HtmForwardSynapse(HtmParameters.ConnectedPermanence)
-            //                         {
-            //                             Input = input,
-            //                             Y = htmSynapses[j] / input.Matrix.GetLength(0),
-            //                             X = htmSynapses[j] % input.Matrix.GetLength(0),
-            //                             Permanance = (Ran.Next(5)) / (double)10,
-            //                         };
+            var ran = new Random();
 
-            //        synapses.Add(newSynapse);
-            //    }
 
-            //    _columnList.Add(new HtmColumn
-            //                    {
-            //                        Y = (int)Math.Round(cluster.Location.Y),
-            //                        X = (int)Math.Round(cluster.Location.X),
-            //                        PotentialSynapses = synapses
-            //                    });
-            //}
 
+            for (int k = 0; k < size; k++)
+            {
+                var synapses = new List<HtmForwardSynapse>();
+
+                for (int i = 0; i < inputWidth; i++)
+                {
+                    for (int j = 0; j < inputHeight; j++)
+                    {
+                        var perm = HtmParameters.ConnectedPermanence;
+
+                        if (ran.Next() % 2 == 0)
+                        {
+                            perm += (ran.NextDouble() / 10);
+                        }
+                        else
+                        {
+                            perm -= (ran.NextDouble() / 10);
+                        }
+
+                        var newSynapse = new HtmForwardSynapse(HtmParameters.ConnectedPermanence)
+                        {
+                            Input = _input,
+                            Y = i,
+                            X = j,
+                            Permanance = perm
+                        };
+
+                        synapses.Add(newSynapse);
+                    }
+                }
+
+                _columnList.Add(new HtmColumn
+                               {
+                                   Y = k / columnWidth,
+                                   X = k % columnWidth,
+                                   PotentialSynapses = synapses
+                               });
+
+
+            }
 
             _activeColumns = new List<HtmColumn>();
         }
@@ -261,10 +284,10 @@ namespace WindowsFormsRetina.Htm
 
         #region Instance
 
-        public HtmSpatialPooler(HtmInput input)
+        public HtmSpatialPooler(int inputWidth, int inputHeight, int columnWidth, int columnHeight)
         {
             _inhibitionRadius = HtmParameters.InhibitionRatio;
-            Init(input);
+            Init(inputWidth, inputHeight, columnWidth, columnHeight);
         }
 
         #endregion

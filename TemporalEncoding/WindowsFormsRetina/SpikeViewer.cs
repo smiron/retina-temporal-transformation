@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using WindowsFormsRetina.Htm;
 
 namespace WindowsFormsRetina
 {
@@ -8,33 +9,36 @@ namespace WindowsFormsRetina
     {
         private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\TestImage.png";
         private readonly Random _ran = new Random();
+        private const int InputSize = 16;
         private readonly SpikeConverter _convertor = new SpikeConverter();
+        private HtmSpatialPooler _spatialPooler = new HtmSpatialPooler(InputSize, InputSize, InputSize, InputSize);
+
 
         public SpikeViewer()
         {
             InitializeComponent();
             Load += SpikeViewerLoad;
         }
-        
+
         private byte[,] GetInput()
         {
-            const int size = 16;
 
-            var result = new byte[size,size];
+
+            var result = new byte[InputSize, InputSize];
 
 
             var src = Image.FromFile(ImgPath);
-            
-            var startX = _ran.Next(src.Width - size);
-            var startY = _ran.Next(src.Height - size);
 
-            var cropRect = new Rectangle(startX, startY, size, size);
-            
+            var startX = _ran.Next(src.Width - InputSize);
+            var startY = _ran.Next(src.Height - InputSize);
+
+            var cropRect = new Rectangle(startX, startY, InputSize, InputSize);
+
             var target = new Bitmap(cropRect.Width, cropRect.Height);
 
             using (Graphics g = Graphics.FromImage(target))
             {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect,GraphicsUnit.Pixel);
+                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
             }
 
             for (int i = 0; i < target.Width; i++)
@@ -49,7 +53,7 @@ namespace WindowsFormsRetina
 
             return result;
         }
-        
+
         private void DoLoadSpikes()
         {
             var input = GetInput();
@@ -76,23 +80,26 @@ namespace WindowsFormsRetina
                 {
                     var result = _convertor.IterateResult();
 
+                    _spatialPooler.SetInput(result);
+                    _spatialPooler.Run();
+
                     for (int i = 0; i < result.GetLength(0); i++)
                     {
                         for (int j = 0; j < result.GetLength(1); j++)
                         {
                             if (result[i, j])
                             {
-                                gfx.FillRectangle(Brushes.Blue, i*size + paddingX, j*size + paddingY, size, size);
+                                gfx.FillRectangle(Brushes.Blue, i * size + paddingX, j * size + paddingY, size, size);
                             }
                             else
                             {
-                                gfx.FillRectangle(Brushes.Black, i*size + paddingX, j*size + paddingY, size, size);
+                                gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY, size, size);
                             }
                         }
                     }
 
-                    paddingX = ((size*(result.GetLength(0) + 1))*(k%32));
-                    paddingY = ((size*(result.GetLength(1) + 1))*(k/32));
+                    paddingX = ((size * (result.GetLength(0) + 1)) * (k % 32));
+                    paddingY = ((size * (result.GetLength(1) + 1)) * (k / 32));
                 }
             }
 
