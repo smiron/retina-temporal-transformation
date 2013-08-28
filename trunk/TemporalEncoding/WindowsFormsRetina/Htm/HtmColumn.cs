@@ -82,7 +82,7 @@ namespace WindowsFormsRetina.Htm
 
         public IEnumerable<HtmForwardSynapse> GetConnectedSynapses()
         {
-            return PotentialSynapses.Where(synapse => synapse.IsConnected() ).ToList();
+            return PotentialSynapses.Where(synapse => synapse.Permanance > HtmParameters.ConnectedPermanence).ToList();
         }
 
         public void AddActivationToHistory(bool state)
