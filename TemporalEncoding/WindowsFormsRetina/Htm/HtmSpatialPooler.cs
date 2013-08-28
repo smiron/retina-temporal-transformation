@@ -61,7 +61,8 @@ namespace WindowsFormsRetina.Htm
         {
             foreach (HtmColumn column in _columnList)
             {
-                int overlap = column.GetConnectedSynapses().Sum(synapse => synapse.SourceInput ? 1 : 0);
+                //int overlap = column.GetConnectedSynapses().Sum(synapse => synapse.SourceInput ? 1 : 0);
+                int overlap = column.GetConnectedSynapses().Count(synapse => synapse.SourceInput);
 
                 if (overlap < HtmParameters.MinimumOverlap)
                 {
@@ -139,7 +140,7 @@ namespace WindowsFormsRetina.Htm
         /// <returns></returns>
         private static double KthScore(IEnumerable<HtmColumn> neighbors, int desiredLocalActivity)
         {
-            IOrderedEnumerable<HtmColumn> sorted = neighbors.OrderByDescending(c => c.Overlap);
+            IEnumerable<HtmColumn> sorted = neighbors.OrderByDescending(c => c.Overlap).ToArray();
             int index = Math.Min(desiredLocalActivity, sorted.Count()) - 1;
             if (index >= 0)
             {

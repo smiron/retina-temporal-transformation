@@ -73,7 +73,7 @@ namespace WindowsFormsRetina
                 var paddingX = 0;
                 var paddingY = 0;
                 const int size = 2;
-                const int maxSize = 350;
+                const int maxSize = 256;
 
 
                 for (int k = 0; k < maxSize; k++)
@@ -95,11 +95,20 @@ namespace WindowsFormsRetina
                             {
                                 gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY, size, size);
                             }
+
+                            gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY + size * (result.GetLength(0) + 1), size, size);
+
                         }
                     }
 
+
+                    foreach (var activeColumn in _spatialPooler.ActiveColumns)
+                    {
+                        gfx.FillRectangle(Brushes.Red, activeColumn.X * size + paddingX, activeColumn.Y * size + paddingY + size * (result.GetLength(0) + 1), size, size);
+                    }
+
                     paddingX = ((size * (result.GetLength(0) + 1)) * (k % 32));
-                    paddingY = ((size * (result.GetLength(1) + 1)) * (k / 32));
+                    paddingY = ((size * (result.GetLength(1) + 1) * 2) * (k / 32));
                 }
             }
 
