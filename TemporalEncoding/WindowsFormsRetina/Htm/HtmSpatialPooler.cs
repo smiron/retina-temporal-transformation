@@ -61,8 +61,8 @@ namespace WindowsFormsRetina.Htm
         {
             foreach (HtmColumn column in _columnList)
             {
-                //int overlap = column.GetConnectedSynapses().Sum(synapse => synapse.SourceInput ? 1 : 0);
-                int overlap = column.GetConnectedSynapses().Count(synapse => synapse.SourceInput);
+                int overlap = column.PotentialSynapses.Count(synapse =>
+                    (synapse.Permanance > HtmParameters.ConnectedPermanence) && synapse.Input.Matrix[synapse.X, synapse.Y]);
 
                 if (overlap < HtmParameters.MinimumOverlap)
                 {

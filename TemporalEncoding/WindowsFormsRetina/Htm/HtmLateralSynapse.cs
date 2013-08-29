@@ -10,17 +10,10 @@
 
         #region Properties
 
-        public HtmCell InputCell
-        {
-            get; 
-            set;
-        }
+        public HtmCell InputCell;
 
-        public double Permanance
-        {
-            get;
-            set;
-        }
+        public double Permanance;
+        
 
         #endregion
 

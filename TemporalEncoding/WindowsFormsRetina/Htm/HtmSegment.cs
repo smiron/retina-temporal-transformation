@@ -9,17 +9,9 @@ namespace WindowsFormsRetina.Htm
 
         #region Properties
 
-        public bool IsSequenceSegment
-        {
-            get;
-            set;
-        }
+        public bool IsSequenceSegment;
 
-        public IEnumerable<HtmLateralSynapse> Synapses
-        {
-            get;
-            private set;
-        }
+        public IEnumerable<HtmLateralSynapse> Synapses;
 
         #endregion
 

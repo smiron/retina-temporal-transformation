@@ -18,29 +18,13 @@
             }
         }
 
-        public HtmInput Input
-        {
-            get; 
-            set;
-        }
+        public HtmInput Input;
 
-        public double Permanance
-        {
-            get; 
-            set;
-        }
+        public double Permanance;
 
-        public int X
-        {
-            get; 
-            set;
-        }
+        public int X;
 
-        public int Y
-        {
-            get; 
-            set;
-        }
+        public int Y;
 
         #endregion
 
