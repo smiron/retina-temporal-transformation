@@ -182,7 +182,7 @@ namespace WindowsFormsRetina.Htm
             foreach (HtmColumn column in _columnList)
             {
                 column.UpdateColumnBoost();
-                column.UpdateSynapsePermanance(HtmParameters.ConnectedPermanence);
+                //column.UpdateSynapsePermanance(HtmParameters.ConnectedPermanence);
             }
 
             _inhibitionRadiusBefore = _inhibitionRadius;

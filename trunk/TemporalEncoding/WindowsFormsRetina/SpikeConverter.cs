@@ -47,7 +47,7 @@ namespace WindowsFormsRetina
             {
                 for (int j = 0; j < _imgHeight; j++)
                 {
-                    _spikeFrequency[i, j] = input[i, j] % 128;
+                    _spikeFrequency[i, j] = input[i, j] % 256;
                 }
             }
         }

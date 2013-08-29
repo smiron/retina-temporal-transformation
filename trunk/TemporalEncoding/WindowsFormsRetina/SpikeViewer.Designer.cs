@@ -45,9 +45,9 @@
             // 
             // Generate
             // 
-            this.Generate.Location = new System.Drawing.Point(0, 548);
+            this.Generate.Location = new System.Drawing.Point(0, 300);
             this.Generate.Name = "Generate";
-            this.Generate.Size = new System.Drawing.Size(75, 23);
+            this.Generate.Size = new System.Drawing.Size(55, 23);
             this.Generate.TabIndex = 1;
             this.Generate.Text = "button1";
             this.Generate.UseVisualStyleBackColor = true;
@@ -65,7 +65,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1182, 568);
+            this.ClientSize = new System.Drawing.Size(626, 487);
             this.Controls.Add(this.source);
             this.Controls.Add(this.Generate);
             this.Controls.Add(this.output);
