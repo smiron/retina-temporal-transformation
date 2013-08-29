@@ -7,18 +7,27 @@ namespace WindowsFormsRetina
 {
     public partial class SpikeViewer : Form
     {
-        private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\TestImage.png";
+        private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\Retina.jpg";
         private readonly Random _ran = new Random();
-        private const int InputSize = 12;
+        private const int InputSize = 8;
+        private const int ColumnSize = 8;
+
         private readonly SpikeConverter _convertor = new SpikeConverter();
-        private HtmSpatialPooler _spatialPooler = new HtmSpatialPooler(InputSize, InputSize, InputSize, InputSize);
+        private HtmSpatialPooler _spatialPooler = new HtmSpatialPooler(InputSize, InputSize, ColumnSize, ColumnSize);
 
 
         public SpikeViewer()
         {
             InitializeComponent();
             Load += SpikeViewerLoad;
+
+            _xx = _ran.Next(20)+200;
+            _yy = _ran.Next(20)+300;
         }
+
+
+        private int _xx;
+        private int _yy;
 
         private byte[,] GetInput()
         {
@@ -29,10 +38,33 @@ namespace WindowsFormsRetina
 
             var src = Image.FromFile(ImgPath);
 
-            var startX = _ran.Next(src.Width - InputSize);
-            var startY = _ran.Next(src.Height - InputSize);
+            if (_ran.Next() % 2 == 0)
+            {
+                _xx += _ran.Next(40);
+            }
+            else
+            {
+                _xx -= _ran.Next(40);
+            }
 
-            var cropRect = new Rectangle(startX, startY, InputSize, InputSize);
+            if (_ran.Next() % 2 == 0)
+            {
+                _yy += _ran.Next(40);
+            }
+            else
+            {
+                _yy -= _ran.Next(40);
+            }
+            
+
+            if (_xx <= 0 || _yy <= 0 || _xx >= (src.Width - InputSize) || _yy >= (src.Height - InputSize))
+            {
+                _xx = _ran.Next(src.Width - InputSize);
+                _yy = _ran.Next(src.Height - InputSize);
+            }
+            
+
+            var cropRect = new Rectangle(_xx, _yy, InputSize, InputSize);
 
             var target = new Bitmap(cropRect.Width, cropRect.Height);
 
@@ -56,10 +88,6 @@ namespace WindowsFormsRetina
 
         private void DoLoadSpikes()
         {
-            var input = GetInput();
-
-            _convertor.SetInput(input);
-
             var bmp = new Bitmap(1200, 600);
 
             using (Graphics gfx = Graphics.FromImage(bmp))
@@ -72,43 +100,71 @@ namespace WindowsFormsRetina
 
                 var paddingX = 0;
                 var paddingY = 0;
-                const int size = 2;
+                const int size = 8;
+                const int columnSize = 8;
                 const int maxSize = 256;
 
+                
 
-                for (int k = 0; k < maxSize; k++)
+                for (int i = 0; i < 1; i++)
                 {
-                    var result = _convertor.IterateResult();
 
-                    _spatialPooler.SetInput(result);
-                    _spatialPooler.Run();
+                    var input = GetInput();
+                    _convertor.SetInput(input);
 
-                    for (int i = 0; i < result.GetLength(0); i++)
+
+                    for (int k = 0; k < maxSize; k++)
                     {
-                        for (int j = 0; j < result.GetLength(1); j++)
-                        {
-                            if (result[i, j])
-                            {
-                                gfx.FillRectangle(Brushes.Blue, i * size + paddingX, j * size + paddingY, size, size);
-                            }
-                            else
-                            {
-                                gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY, size, size);
-                            }
+                        var result = _convertor.IterateResult();
 
-                            gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY + size * (result.GetLength(0) + 1), size, size);
+                        _spatialPooler.SetInput(result);
+                        _spatialPooler.Run();
 
-                        }
+                        //for (int i = 0; i < result.GetLength(0); i++)
+                        //{
+                        //    for (int j = 0; j < result.GetLength(1); j++)
+                        //    {
+                        //        if (result[i, j])
+                        //        {
+                        //            gfx.FillRectangle(Brushes.Blue, i * size + paddingX, j * size + paddingY, size, size);
+                        //        }
+                        //        else
+                        //        {
+                        //            gfx.FillRectangle(Brushes.Black, i * size + paddingX, j * size + paddingY, size, size);
+                        //        }
+
+                        //        if (i < ColumnSize && j < ColumnSize)
+                        //        {
+                        //            gfx.FillRectangle(Brushes.Black, i * columnSize + paddingX, j * columnSize + paddingY + size * (result.GetLength(0) + 1), columnSize, columnSize);
+                        //        }
+
+                        //    }
+                        //}
+
+
+                        //foreach (var activeColumn in _spatialPooler.ActiveColumns)
+                        //{
+                        //    gfx.FillRectangle(Brushes.Red, activeColumn.X * columnSize + paddingX, activeColumn.Y * columnSize + paddingY + size * (result.GetLength(0) + 1), columnSize, columnSize);
+                        //}
+
+                        //paddingX = ((size * (result.GetLength(0) + 1)) * (k % 32));
+                        //paddingY = ((size * (result.GetLength(1) + 1) * 2) * (k / 32));
+                    }
+                }
+
+                foreach (var column in _spatialPooler.Columns)
+                {
+                    paddingX = column.X * size * 10;
+                    paddingY = column.Y * size * 10;
+
+                    foreach (var synapse in column.PotentialSynapses)
+                    {
+                        gfx.FillRectangle(new SolidBrush(Color.FromArgb(0, 0, (byte)(Math.Min(synapse.Permanance * column.Boost * 255,255)))), synapse.X * size + paddingX, synapse.Y * size + paddingY, size, size);
                     }
 
+                   
 
-                    foreach (var activeColumn in _spatialPooler.ActiveColumns)
-                    {
-                        gfx.FillRectangle(Brushes.Red, activeColumn.X * size + paddingX, activeColumn.Y * size + paddingY + size * (result.GetLength(0) + 1), size, size);
-                    }
 
-                    paddingX = ((size * (result.GetLength(0) + 1)) * (k % 32));
-                    paddingY = ((size * (result.GetLength(1) + 1) * 2) * (k / 32));
                 }
             }
 
@@ -118,12 +174,18 @@ namespace WindowsFormsRetina
 
         void SpikeViewerLoad(object sender, EventArgs e)
         {
-            DoLoadSpikes();
+            //DoLoadSpikes();
         }
 
         private void LoadSpikes(object sender, EventArgs e)
         {
-            DoLoadSpikes();
+
+            while (true)
+            {
+                DoLoadSpikes();
+                Application.DoEvents();
+            }
+            
         }
     }
 }
