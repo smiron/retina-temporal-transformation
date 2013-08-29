@@ -40,23 +40,11 @@ namespace WindowsFormsRetina.Htm
         #region Properties
 
 
-        public bool ActiveState
-        {
-            get;
-            set;
-        }
+        public bool ActiveState;
 
-        public bool PredictiveState
-        {
-            get;
-            set;
-        }
+        public bool PredictiveState;
 
-        public IEnumerable<HtmSegment> Segments
-        {
-            get;
-            set;
-        }
+        public IEnumerable<HtmSegment> Segments;
 
         #endregion
 

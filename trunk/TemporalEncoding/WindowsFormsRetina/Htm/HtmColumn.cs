@@ -16,65 +16,25 @@ namespace WindowsFormsRetina.Htm
 
         #region Properties
 
-        public int X
-        {
-            get;
-            set;
-        }
+        public int X;
 
-        public int Y
-        {
-            get;
-            set;
-        }
+        public int Y;
 
-        public IEnumerable<HtmCell> Cells
-        {
-            get; 
-            set;
-        }
+        public IEnumerable<HtmCell> Cells;
 
-        public IEnumerable<HtmColumn> Neighbors
-        {
-            get;
-            set;
-        }
+        public IEnumerable<HtmColumn> Neighbors;
 
-        public IEnumerable<HtmForwardSynapse> PotentialSynapses
-        {
-            get;
-            set;
-        }
+        public IEnumerable<HtmForwardSynapse> PotentialSynapses;
 
-        public double Boost
-        {
-            get;
-            set;
-        }
+        public double Boost;
 
-        public double Overlap
-        {
-            get;
-            set;
-        }
+        public double Overlap;
 
-        public double MinimalDutyCycle
-        {
-            get;
-            set;
-        }
+        public double MinimalDutyCycle;
 
-        public double ActiveDutyCycle
-        {
-            get;
-            set;
-        }
+        public double ActiveDutyCycle;
 
-        public double OverlapDutyCycle
-        {
-            get;
-            set;
-        }
+        public double OverlapDutyCycle;
 
         #endregion
 

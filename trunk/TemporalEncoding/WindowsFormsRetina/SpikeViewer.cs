@@ -9,7 +9,7 @@ namespace WindowsFormsRetina
     {
         private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\TestImage.png";
         private readonly Random _ran = new Random();
-        private const int InputSize = 16;
+        private const int InputSize = 12;
         private readonly SpikeConverter _convertor = new SpikeConverter();
         private HtmSpatialPooler _spatialPooler = new HtmSpatialPooler(InputSize, InputSize, InputSize, InputSize);
 
