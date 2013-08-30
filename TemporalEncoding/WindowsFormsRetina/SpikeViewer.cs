@@ -10,7 +10,7 @@ namespace WindowsFormsRetina
         private const string ImgPath = @"C:\temp\temporal\TemporalEncoding\TemporalEncoding\Images\Retina.jpg";
         private readonly Random _ran = new Random();
         private const int InputSize = 8;
-        private const int ColumnSize = 8;
+        private const int ColumnSize = 4;
 
         private readonly SpikeConverter _convertor = new SpikeConverter();
         private HtmSpatialPooler _spatialPooler = new HtmSpatialPooler(InputSize, InputSize, ColumnSize, ColumnSize);
