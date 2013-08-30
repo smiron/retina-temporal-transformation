@@ -21,7 +21,7 @@
         /// <summary>
         /// A minimum number of inputs that must be active for a column to be considered during the inhibition step.
         /// </summary>
-        public static int MinimumOverlap = 10;
+        public static int MinimumOverlap = 3;
 
         /// <summary>
         /// A parameter controlling the number of columns that will be winners after the inhibition step
@@ -31,17 +31,17 @@
         /// <summary>
         /// Starting value for : Average connected receptive field size of the columns.
         /// </summary>
-        public static double InhibitionRatio = 7.0;
+        public static double InhibitionRatio = 5.0;
 
         /// <summary>
         /// Amount permanence values of forward synapses are incremented during spatial pooler learning
         /// </summary>
-        public static double PermanceIncrement = 0.0000005;
+        public static double PermanceIncrement = 0.05;
         
         /// <summary>
         /// If the permanence value for a forward synapse is greater than this value, it is said to be connected.
         /// </summary>
-        public static double ConnectedPermanence = 0.3;
+        public static double ConnectedPermanence = 0.2;
 
         /*
          * 
